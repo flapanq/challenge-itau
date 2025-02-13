@@ -24,6 +24,11 @@ O endpoint para consulta de cotações.
 Observabilidade (métricas, traces e logs).
 
 
+Como executar o projeto.
+1 - Entrar na paste docker-compose e executar o comando docker compose up
+2 - Importar a collection do postman localizado na pasta colletions - collections
+3 - No arquivo application.yaml alterar a para a propriedade ddl-auto: create na primeira execução
+
  
 
  

@@ -3,17 +3,16 @@ package com.challenge.domain.usecase;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.challenge.adapter.outbound.entities.Assistance;
 import com.challenge.adapter.outbound.entities.Coverage;
 import com.challenge.adapter.outbound.entities.Customer;
 import com.challenge.adapter.outbound.entities.Quote;
-import com.challenge.adapter.outbound.integration.kafka.QuoteEvent;
 import com.challenge.adapter.outbound.integration.kafka.QuoteProducer;
+import com.challenge.adapter.outbound.integration.quote.QuoteEnventAdapter;
 import com.challenge.adapter.outbound.repository.QuoteRepository;
 import com.challenge.domain.domains.QuoteDTO;
 import com.challenge.domain.ports.inbound.InsuranceQuoteUseCasePort;
+import com.challenge.domain.ports.outbound.QuoteApapterPort;
 
 public class InsuranceQuoteUseCase implements InsuranceQuoteUseCasePort{
 	
@@ -21,17 +20,18 @@ public class InsuranceQuoteUseCase implements InsuranceQuoteUseCasePort{
 	
 	private final ProductUseCase productUseCase;
 	
-	private QuoteRepository quoteRepository;
+	private QuoteApapterPort quoteApapterPort;
 	
-	private QuoteProducer quoteProducer;
+	private QuoteEnventAdapter quoteEnventAdapter;
+	
 
 	public InsuranceQuoteUseCase(OfferUseCase offerUseCase, ProductUseCase productUseCase, QuoteRepository quoteRepository
-			, QuoteProducer quoteProducer) {
+			, QuoteProducer quoteProducer, QuoteApapterPort quoteApapterPort, QuoteEnventAdapter quoteEnventAdapter) {
 		super();
 		this.offerUseCase = offerUseCase;
 		this.productUseCase = productUseCase;
-		this.quoteRepository = quoteRepository;
-		this.quoteProducer = quoteProducer;
+		this.quoteApapterPort = quoteApapterPort;
+		this.quoteEnventAdapter = quoteEnventAdapter;
 	}
 
 
@@ -44,24 +44,11 @@ public class InsuranceQuoteUseCase implements InsuranceQuoteUseCasePort{
 		
 		Quote quoteEntiy = convertQuoteDTOToEntity(quoteDTO);
 		
-		Quote quoteSaved =  saveQuote(quoteEntiy);
+		Quote quoteSaved =  quoteApapterPort.saveQuote(quoteEntiy);
 		
-        sendQuoteEvent(quoteSaved);
+		quoteEnventAdapter.sendQuoteEvent(quoteSaved);
 		
 		return Optional.empty();
-	}
-	
-	private Quote saveQuote(Quote quoteEntiy) {
-		return quoteRepository.save(quoteEntiy);
-	}
-	
-	private void sendQuoteEvent(Quote quoteSaved) {
-		
-		QuoteEvent quoteEvent = new QuoteEvent();
-		quoteEvent.setId(quoteSaved.getId());
-		quoteEvent.setMessage("Solicitação de Cotação Recebida");
-		quoteProducer.sendQuoteEvent(quoteEvent);
-		
 	}
 	
 	

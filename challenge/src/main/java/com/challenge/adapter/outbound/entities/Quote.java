@@ -31,6 +31,8 @@ public class Quote {
 	private List<Assistance> assistances;
 	@ManyToOne(cascade = CascadeType.ALL)
     private	Customer customer;
+	private Long insurancePolicyId;
+	
 	public Long getId() {
 		return id;
 	}
@@ -85,6 +87,14 @@ public class Quote {
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
 	}
+	public Long getInsurancePolicyId() {
+		return insurancePolicyId;
+	}
+	public void setInsurancePolicyId(Long insurancePolicyId) {
+		this.insurancePolicyId = insurancePolicyId;
+	}
+	
+	
 	
 	
 

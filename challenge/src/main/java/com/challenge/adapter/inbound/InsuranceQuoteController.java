@@ -1,5 +1,8 @@
 package com.challenge.adapter.inbound;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -8,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.challenge.adapter.inbound.mapper.QuoteMapper;
 import com.challenge.adapter.inbound.request.QuoteRequestParam;
+import com.challenge.adapter.outbound.messages.ApiSucess;
 import com.challenge.domain.domains.QuoteDTO;
 import com.challenge.domain.ports.inbound.InsuranceQuoteUseCasePort;
 
@@ -28,15 +32,18 @@ public class InsuranceQuoteController {
 	}
 
 	@PostMapping
-	public ResponseEntity<String> insuranceQuoteRequest(@RequestBody QuoteRequestParam quoteRequestParam) {
+	public ResponseEntity<ApiSucess> insuranceQuoteRequest(@RequestBody QuoteRequestParam quoteRequestParam) {
 		
 		
 		QuoteDTO quote = quoteMapper.sourceToDestination(quoteRequestParam);
 
 		insuranceQuoteUseCasePort.execute(quote);
 
+		List<String> msg = new ArrayList<>();
+		msg.add("Sua solicitacão foi validada e recebida com sucesso");
+		ApiSucess apiSucess = new ApiSucess("200", msg);
 
-		return ResponseEntity.ok("Sua solicitacão foi validada e recebida com sucesso");
+		return ResponseEntity.ok(apiSucess);
 	}
 
 }

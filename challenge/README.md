@@ -22,6 +22,8 @@ OfferValidateStrategy.java
 O que não tive tempo para concluir:
 O endpoint para consulta de cotações.
 Observabilidade (métricas, traces e logs).
+Adicionar mais cenários de testes no OfferUseCaseTest. 
+Desenvolver o Junit InsuranceQuoteUseCaseTest.
 
 
 Como executar o projeto.
